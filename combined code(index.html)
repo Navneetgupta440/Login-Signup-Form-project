@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Signup Form</title>
+    <style>
+        /* Basic Reset */
+        body, h2, form, input, button {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .form-container.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="email"], 
+        input[type="password"] {
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="email"]:focus, 
+        input[type="password"]:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+            outline: none;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        button.toggle-btn {
+            background-color: transparent;
+            color: #007BFF;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        button.toggle-btn:hover {
+            text-decoration: underline;
+        }
+
+        .toggle-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .toggle-container button {
+            background-color: #007BFF;
+            border: none;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .toggle-container button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* Success Message */
+        .success-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 6px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            z-index: 1000;
+            animation: fadeIn 0.5s, fadeOut 0.5s 2.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 15px;
+                margin: 10px;
+            }
+
+            input[type="email"], 
+            input[type="password"] {
+                font-size: 14px;
+            }
+
+            button {
+                font-size: 14px;
+            }
+
+            button.toggle-btn {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Signup Form -->
+        <div class="form-container sign-up active">
+            <h2>Sign Up</h2>
+            <form id="signupForm">
+                <label for="signupEmail">Email:</label>
+                <input type="email" id="signupEmail" required>
+                <label for="signupPassword">Password:</label>
+                <input type="password" id="signupPassword" required>
+                <button type="submit">Sign Up</button>
+            </form>
+            <button id="switchToSignin" class="toggle-btn">Already have an account? Sign In</button>
+        </div>
+
+        <!-- Sign In Form -->
+        <div class="form-container sign-in">
+            <h2>Sign In</h2>
+            <form id="signinForm">
+                <label for="signinEmail">Email:</label>
+                <input type="email" id="signinEmail" required>
+                <label for="signinPassword">Password:</label>
+                <input type="password" id="signinPassword" required>
+                <button type="submit">Sign In</button>
+            </form>
+            <button id="switchToSignup" class="toggle-btn">Don't have an account? Sign Up</button>
+        </div>
+
+        <!-- Toggle Buttons -->
+        <div class="toggle-container">
+            <button id="showSignUp">Sign Up</button>
+            <button id="showSignIn">Sign In</button>
+        </div>
+    </div>
+    <script>
+        // Function to clear form inputs
+        function clearForm(formId) {
+            const form = document.getElementById(formId);
+            form.reset(); // Reset all form fields
+        }
+
+        // Function to show a success message
+        function showSuccessMessage(message) {
+            const successContainer = document.createElement('div');
+            successContainer.className = 'success-message';
+            successContainer.textContent = message;
+            document.body.appendChild(successContainer);
+
+            setTimeout(() => {
+                successContainer.remove();
+            }, 3000); // Remove the message after 3 seconds
+        }
+
+        // Toggle between Sign Up and Sign In forms
+        document.getElementById('switchToSignin').addEventListener('click', function() {
+            document.querySelector('.sign-up').classList.remove('active');
+            document.querySelector('.sign-in').classList.add('active');
+            clearForm('signupForm'); // Clear Sign Up form fields
+        });
+
+        document.getElementById('switchToSignup').addEventListener('click', function() {
+            document.querySelector('.sign-in').classList.remove('active');
+            document.querySelector('.sign-up').classList.add('active');
+            clearForm('signinForm'); // Clear Sign In form fields
+        });
+
+        // Show Sign Up or Sign In form
+        document.getElementById('showSignUp').addEventListener('click', function() {
+            document.querySelector('.sign-up').classList.add('active');
+            document.querySelector('.sign-in').classList.remove('active');
+            clearForm('signinForm'); // Clear Sign In form fields
+        });
+
+        document.getElementById('showSignIn').addEventListener('click', function() {
+            document.querySelector('.sign-in').classList.add('active');
+            document.querySelector('.sign-up').classList.remove('active');
+            clearForm('signupForm'); // Clear Sign Up form fields
+        });
+
+        // Handle Sign Up form submission
+        document.getElementById('signupForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            console.log('Sign Up:', email, password);
+            
+            // Simulate successful Sign Up
+            showSuccessMessage('Sign Up successful! Welcome, ' + email);
+            clearForm('signupForm');
+        });
